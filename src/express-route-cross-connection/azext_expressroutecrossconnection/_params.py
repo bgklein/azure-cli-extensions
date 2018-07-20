@@ -29,30 +29,19 @@ def load_arguments(self, _):
 
     with self.argument_context('network cross-connection') as c:
         c.argument('cross_connection_name', cross_connection_name_type, options_list=('--name', '-n'))
-        c.argument('sku_family', sku_family_type)
-        c.argument('sku_tier', sku_tier_type)
         c.argument('bandwidth_in_mbps', options_list=('--bandwidth',), help="Bandwidth in Mbps of the circuit.")
-        c.argument('service_provider_name', options_list=('--provider',), help="Name of the ExpressRoute Service Provider.")
-        c.argument('peering_location', help="Name of the peering location.")
-        c.argument('device_path', options_list=('--path',), arg_type=get_enum_type(device_path_values))
-        c.argument('vlan_id', type=int)
-        c.argument('location', get_location_type(self.cli_ctx), validator=get_default_location_from_resource_group)
 
     with self.argument_context('network cross-connection update') as c:
-        c.argument('sku_family', sku_family_type, default=None)
-        c.argument('sku_tier', sku_tier_type, default=None)
         c.argument('notes', help='Service provider notes.')
         c.argument('provisioning_state', arg_type=get_enum_type(['Provisioning', 'Provisioned', 'NotProvisioned']), help='Provisioning state of the customer ExpressRoute circuit.')
 
     with self.argument_context('network cross-connection peering') as c:
         # Using six.integer_types so we get int for Py3 and long for Py2
         c.argument('peer_asn', help='Autonomous system number of the customer/connectivity provider.', type=six.integer_types[-1])
-        c.argument('vlan_id', help='Identifier used to identify the customer.')
+        c.argument('vlan_id', help='Identifier used to identify the customer.', type=int)
         c.argument('cross_connection_name', cross_connection_name_type)
         c.argument('peering_name', name_arg_type, id_part='child_name_1')
         c.argument('peering_type', validator=validate_peering_type, arg_type=get_enum_type(ExpressRoutePeeringType), help='BGP peering type for the circuit.')
-        c.argument('sku_family', arg_type=get_enum_type(ExpressRouteCircuitSkuFamily))
-        c.argument('sku_tier', arg_type=get_enum_type(ExpressRouteCircuitSkuTier))
         c.argument('primary_peer_address_prefix', options_list=['--primary-peer-subnet'], help='/30 subnet used to configure IP addresses for primary interface.')
         c.argument('secondary_peer_address_prefix', options_list=['--secondary-peer-subnet'], help='/30 subnet used to configure IP addresses for secondary interface.')
         c.argument('advertised_public_prefixes', arg_group='Microsoft Peering', nargs='+', help='Space-separated list of prefixes to be advertised through the BGP peering.')
